@@ -1,0 +1,28 @@
+---
+import { getCollection } from 'astro:content';
+import BlogLayout from '../../layouts/BlogLayout.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await post.render();
+---
+
+<BlogLayout title={post.data.title} description={post.data.description}>
+  <article>
+    <header style="margin-bottom: 2rem;">
+      <h1 style="font-size: 2.5rem; margin-bottom: 0.5rem;">{post.data.title}</h1>
+      <p style="color: #666; font-size: 0.9rem;">
+        发布时间: {post.data.pubDate.toLocaleDateString('zh-CN')}
+      </p>
+    </header>
+    <Content />
+  </article>
+</BlogLayout>
+
